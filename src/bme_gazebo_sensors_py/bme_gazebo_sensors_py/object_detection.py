@@ -4,6 +4,7 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 from geometry_msgs.msg import Twist
 import cv2
+from videeps_pkg.srv import SetTargetObject
 import numpy as np
 import threading
 from ultralytics import YOLO as yolo
@@ -82,6 +83,18 @@ class ImageSubscriber(Node):
         # Start a separate thread for spinning (to ensure image_callback keeps receiving new frames)
         self.spin_thread = threading.Thread(target=self.spin_thread_func)
         self.spin_thread.start()
+        
+        #to receive the object to follow 
+        self.target_object = "person"
+        self.srv = self.create_service(SetTargetObject, 'set_target_object', self.set_target_callback)
+        self.get_logger().info("Searching for object")
+        
+    def set_target_callback(self, request, response):
+        self.target_object = request.object_name
+        response.success = True
+        response.message = f"Now following: {self.target_object}"
+        self.get_logger().info(response.message)
+        return response
 
     def spin_thread_func(self):
         """Separate thread function for rclpy spinning."""
@@ -318,7 +331,7 @@ class ImageSubscriber(Node):
 
                 cls = box.cls[0]
                 name = self.classNames[int(cls)]
-                if name == "person":
+                if name == self.target_object:
                     
                     image_center_x = cols/2
                     
@@ -442,7 +455,7 @@ class ImageSubscriber(Node):
 
                 # self.publisher.publish(msg)
                 # cvzone.putTextRect(img, f'{self.classNames[int(cls)]} {conf}', (x1,y1-20))
-            if not any(self.classNames[int(b.cls[0])] == "person" for b in boxes):
+            if not any(self.classNames[int(b.cls[0])] == self.target_object for b in boxes):
                 
                 # self.get_logger().info("I am stopping outside rahh")
                 # msg.linear.x = 0.0

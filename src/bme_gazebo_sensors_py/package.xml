@@ -7,6 +7,10 @@
   <maintainer email="david.dudas@outlook.com">David Dudas</maintainer>
   <license>Apache License 2.0</license>
 
+  <exec_depend>videeps_pkg</exec_depend>
+  <build_depend>videeps_pkg</build_depend>
+  <build_export_depend>videep_pkg</build_export_depend>
+  
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>
