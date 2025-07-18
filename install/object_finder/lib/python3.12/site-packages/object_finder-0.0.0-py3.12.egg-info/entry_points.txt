@@ -1,2 +1,0 @@
-[console_scripts]
-controller_node = object_finder.controller_node:main

@@ -1,6 +1,0 @@
-{
-  "package_name": "videeps_pkg",
-  "non_idl_tuples": [
-    "/home/videep/ROS2/projectStuff/ros_bot/src/videeps_pkg:srv/SetTargetObject.srv"
-  ]
-}
