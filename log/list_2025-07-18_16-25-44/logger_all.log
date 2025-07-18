@@ -1,0 +1,100 @@
+[0.058s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'list', '-p', '--base-paths', '/home/sagar-venkatesh/ros_bot', '--log-base', '/dev/null']
+[0.058s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='list', build_base='build', ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['/home/sagar-venkatesh/ros_bot', '--log-base', '/dev/null'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=None, packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, allow_overriding=[], topological_order=False, names_only=False, paths_only=True, topological_graph=False, topological_graph_dot=False, topological_graph_density=False, topological_graph_legend=False, topological_graph_dot_cluster=False, topological_graph_dot_include_skipped=False, mixin_files=None, mixin=None, verb_parser=<colcon_mixin.mixin.mixin_argument.MixinArgumentDecorator object at 0x70925ad76690>, verb_extension=<colcon_package_information.verb.list.ListVerb object at 0x70925ad75970>, main=<bound method ListVerb.main of <colcon_package_information.verb.list.ListVerb object at 0x70925ad75970>>, mixin_verb=('list',))
+[0.080s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.080s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.080s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.080s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.080s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.080s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/sagar-venkatesh/ros_bot', '/home/sagar-venkatesh/ros_bot/--log-base', '/dev/null'
+[0.080s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot) by extensions ['ignore', 'ignore_ament_install']
+[0.080s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot) by extension 'ignore'
+[0.080s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot) by extension 'ignore_ament_install'
+[0.080s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot) by extensions ['colcon_pkg']
+[0.080s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot) by extension 'colcon_pkg'
+[0.080s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot) by extensions ['colcon_meta']
+[0.080s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot) by extension 'colcon_meta'
+[0.080s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot) by extensions ['ros']
+[0.080s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot) by extension 'ros'
+[0.096s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot) by extensions ['cmake', 'python']
+[0.096s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot) by extension 'cmake'
+[0.096s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot) by extension 'python'
+[0.096s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot) by extensions ['python_setup_py']
+[0.096s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot) by extension 'python_setup_py'
+[0.096s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/log) by extensions ['ignore', 'ignore_ament_install']
+[0.096s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/log) by extension 'ignore'
+[0.096s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/log) ignored
+[0.096s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src) by extensions ['ignore', 'ignore_ament_install']
+[0.096s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src) by extension 'ignore'
+[0.096s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src) by extension 'ignore_ament_install'
+[0.096s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src) by extensions ['colcon_pkg']
+[0.096s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src) by extension 'colcon_pkg'
+[0.096s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src) by extensions ['colcon_meta']
+[0.096s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src) by extension 'colcon_meta'
+[0.096s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src) by extensions ['ros']
+[0.096s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src) by extension 'ros'
+[0.096s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src) by extensions ['cmake', 'python']
+[0.096s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src) by extension 'cmake'
+[0.096s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src) by extension 'python'
+[0.096s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src) by extensions ['python_setup_py']
+[0.096s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src) by extension 'python_setup_py'
+[0.096s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_gazebo_sensors) by extensions ['ignore', 'ignore_ament_install']
+[0.096s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_gazebo_sensors) by extension 'ignore'
+[0.097s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_gazebo_sensors) by extension 'ignore_ament_install'
+[0.097s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_gazebo_sensors) by extensions ['colcon_pkg']
+[0.097s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_gazebo_sensors) by extension 'colcon_pkg'
+[0.097s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_gazebo_sensors) by extensions ['colcon_meta']
+[0.097s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_gazebo_sensors) by extension 'colcon_meta'
+[0.097s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_gazebo_sensors) by extensions ['ros']
+[0.097s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_gazebo_sensors) by extension 'ros'
+[0.098s] DEBUG:colcon.colcon_core.package_identification:Package '/home/sagar-venkatesh/ros_bot/src/bme_gazebo_sensors' with type 'ros.ament_cmake' and name 'bme_gazebo_sensors'
+[0.098s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_gazebo_sensors_py) by extensions ['ignore', 'ignore_ament_install']
+[0.098s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_gazebo_sensors_py) by extension 'ignore'
+[0.098s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_gazebo_sensors_py) by extension 'ignore_ament_install'
+[0.098s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_gazebo_sensors_py) by extensions ['colcon_pkg']
+[0.098s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_gazebo_sensors_py) by extension 'colcon_pkg'
+[0.098s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_gazebo_sensors_py) by extensions ['colcon_meta']
+[0.098s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_gazebo_sensors_py) by extension 'colcon_meta'
+[0.098s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_gazebo_sensors_py) by extensions ['ros']
+[0.098s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_gazebo_sensors_py) by extension 'ros'
+[0.099s] DEBUG:colcon.colcon_core.package_identification:Package '/home/sagar-venkatesh/ros_bot/src/bme_gazebo_sensors_py' with type 'ros.ament_python' and name 'bme_gazebo_sensors_py'
+[0.099s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_ros2_navigation) by extensions ['ignore', 'ignore_ament_install']
+[0.099s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_ros2_navigation) by extension 'ignore'
+[0.099s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_ros2_navigation) by extension 'ignore_ament_install'
+[0.099s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_ros2_navigation) by extensions ['colcon_pkg']
+[0.099s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_ros2_navigation) by extension 'colcon_pkg'
+[0.099s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_ros2_navigation) by extensions ['colcon_meta']
+[0.099s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_ros2_navigation) by extension 'colcon_meta'
+[0.099s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_ros2_navigation) by extensions ['ros']
+[0.099s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_ros2_navigation) by extension 'ros'
+[0.099s] DEBUG:colcon.colcon_core.package_identification:Package '/home/sagar-venkatesh/ros_bot/src/bme_ros2_navigation' with type 'ros.ament_cmake' and name 'bme_ros2_navigation'
+[0.099s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_ros2_navigation_py) by extensions ['ignore', 'ignore_ament_install']
+[0.099s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_ros2_navigation_py) by extension 'ignore'
+[0.099s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_ros2_navigation_py) by extension 'ignore_ament_install'
+[0.099s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_ros2_navigation_py) by extensions ['colcon_pkg']
+[0.099s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_ros2_navigation_py) by extension 'colcon_pkg'
+[0.099s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_ros2_navigation_py) by extensions ['colcon_meta']
+[0.099s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_ros2_navigation_py) by extension 'colcon_meta'
+[0.099s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_ros2_navigation_py) by extensions ['ros']
+[0.099s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/bme_ros2_navigation_py) by extension 'ros'
+[0.100s] DEBUG:colcon.colcon_core.package_identification:Package '/home/sagar-venkatesh/ros_bot/src/bme_ros2_navigation_py' with type 'ros.ament_python' and name 'bme_ros2_navigation_py'
+[0.100s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/explore) by extensions ['ignore', 'ignore_ament_install']
+[0.100s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/explore) by extension 'ignore'
+[0.100s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/explore) by extension 'ignore_ament_install'
+[0.100s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/explore) by extensions ['colcon_pkg']
+[0.100s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/explore) by extension 'colcon_pkg'
+[0.100s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/explore) by extensions ['colcon_meta']
+[0.100s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/explore) by extension 'colcon_meta'
+[0.100s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/explore) by extensions ['ros']
+[0.100s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/explore) by extension 'ros'
+[0.100s] DEBUG:colcon.colcon_core.package_identification:Package '/home/sagar-venkatesh/ros_bot/src/explore' with type 'ros.ament_cmake' and name 'explore_lite'
+[0.101s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/object_finder) by extensions ['ignore', 'ignore_ament_install']
+[0.101s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/object_finder) by extension 'ignore'
+[0.101s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/object_finder) by extension 'ignore_ament_install'
+[0.101s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/object_finder) by extensions ['colcon_pkg']
+[0.101s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/object_finder) by extension 'colcon_pkg'
+[0.101s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/object_finder) by extensions ['colcon_meta']
+[0.101s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/object_finder) by extension 'colcon_meta'
+[0.101s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/object_finder) by extensions ['ros']
+[0.101s] Level 1:colcon.colcon_core.package_identification:_identify(/home/sagar-venkatesh/ros_bot/src/object_finder) by extension 'ros'
+[0.101s] DEBUG:colcon.colcon_core.package_identification:Package '/home/sagar-venkatesh/ros_bot/src/object_finder' with type 'ros.ament_python' and name 'object_finder'
+[0.101s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults

@@ -11,6 +11,11 @@ import cvzone
 import math
 from sensor_msgs.msg import LaserScan
 from std_msgs.msg import Bool 
+from geometry_msgs.msg import PoseStamped
+from nav2_msgs.action import NavigateToPose
+from rclpy.action import ActionClient
+import tf2_ros
+from tf2_geometry_msgs import do_transform_pose_stamped
 
 class ImageSubscriber(Node):
     def __init__(self):
@@ -24,13 +29,29 @@ class ImageSubscriber(Node):
             1  # Queue size of 1
         )
 
+        self.goal_in_progress = False
+
+        self.nav_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
+        self.last_goal_time = self.get_clock().now()
+        self.goal_interval_sec = 2.0  # minimum interval between goals
+        self.current_goal_handle = None 
+
+        self.tf_buffer = tf2_ros.Buffer()
+        self.tf_listener = tf2_ros.TransformListener(self.tf_buffer, self)
+
         self.detection_pub = self.create_publisher(Bool, "/object_detected", 10)
         self.object_found = False
+        self.should_stop = False
 
         self.scan_data = None
         self.create_subscription(LaserScan, '/scan', self.scan_callback, 10)
 
         self.publisher = self.create_publisher(Twist, 'cmd_vel', 10)
+
+        self.step_distance = 0.3
+        self.error_count = 0
+
+        self.send_stop_signal = False
         
         # Initialize CvBridge
         self.bridge = CvBridge()
@@ -66,6 +87,86 @@ class ImageSubscriber(Node):
         """Separate thread function for rclpy spinning."""
         while rclpy.ok() and self.running:
             rclpy.spin_once(self, timeout_sec=0.05)
+
+    def send_incremental_goal(self, angle_rad: float, step_distance: float = 0.3):
+
+        if self.goal_in_progress:
+            return
+
+        if not self.nav_client.wait_for_server(timeout_sec=4.0):
+            self.get_logger().error("Nav2 action server not available.")
+            return
+
+        dx = math.cos(angle_rad) * self.step_distance
+        dy = math.sin(angle_rad) * self.step_distance
+        self.get_logger().info(f"Step distance = {self.step_distance}")
+
+        pose = PoseStamped()
+        pose.header.frame_id = "base_link"
+        pose.header.stamp = self.get_clock().now().to_msg()
+        pose.pose.position.x = dx
+        pose.pose.position.y = dy
+        pose.pose.orientation.w = 1.0
+
+        # try:
+        transform = self.tf_buffer.lookup_transform(
+            "map", pose.header.frame_id, rclpy.time.Time())
+
+        pose_map = do_transform_pose_stamped(pose, transform)
+        # except Exception as e:
+            # self.get_logger().error(f"TF transform failed: {e}")
+            # return
+
+        goal_msg = NavigateToPose.Goal()
+        goal_msg.pose = pose_map
+
+        self.goal_in_progress = True
+        self.get_logger().info(
+            f"Sending nav goal to ({pose_map.pose.position.x:.2f}, {pose_map.pose.position.y:.2f})"
+        )
+
+        send_future = self.nav_client.send_goal_async(goal_msg)
+
+        # now = self.get_clock().now()
+        # if (now - self.last_goal_time).nanoseconds / 1e9 < self.goal_interval_sec:
+        #     self.get_logger().info("Waiting before sending next nav goal...")
+        #     return
+
+        # self.get_logger().info(f"Sending nav goal: {dx:.2f}, {dy:.2f} (angle {math.degrees(angle_rad):.1f}°)")
+        # self.nav_client.send_goal_async(goal_msg)
+        # self.last_goal_time = now
+        def goal_response_callback(future):
+            goal_handle = future.result()
+            self.current_goal_handle = goal_handle
+            if not goal_handle.accepted:
+                self.get_logger().warn("Goal rejected.")
+                self.goal_in_progress = False
+                return
+
+            result_future = goal_handle.get_result_async()
+
+            def result_callback(result_future):
+                result = result_future.result()
+                code = result.status
+                if code == 4:  # ABORTED
+                    self.get_logger().error("Goal aborted.")
+                    self.error_count += 1
+                    self.step_distance = 0.3 + self.error_count * 0.1
+                    
+                elif code == 3:  # SUCCEEDED
+                    self.get_logger().info("Goal succeeded.")
+                    self.error_count = 0
+                    self.step_distance = 0.3
+                else:
+                    self.error_count = 0
+                    self.step_distance = 0.3
+                    self.get_logger().warn(f"Goal ended with status: {code}")
+                self.goal_in_progress = False  # Ready for next goal
+
+            result_future.add_done_callback(result_callback)
+
+        send_future.add_done_callback(goal_response_callback)
+
 
     def image_callback(self, msg):
         """Callback function to receive and store the latest frame."""
@@ -178,6 +279,7 @@ class ImageSubscriber(Node):
         return redMask, contourMask, crosshairMask
     
     def identify_image(self, img):
+        
         msg = Twist()
         msg.linear.x = 0.0
         msg.linear.y = 0.0
@@ -190,14 +292,14 @@ class ImageSubscriber(Node):
 
         results = self.model(img)
 
-        def angle_to_scan_index(theta, scan_msg):
-            angle_min = scan_msg.angle_min
-            angle_max = scan_msg.angle_max
-            angle_increment = scan_msg.angle_increment
-            num_ranges = len(scan_msg.ranges)
-            theta = max(angle_min, min(angle_max, theta))
-            index = int(round((theta - angle_min) / angle_increment))
-            return max(0, min(index, num_ranges - 1))
+        # def angle_to_scan_index(theta, scan_msg):
+        #     angle_min = scan_msg.angle_min
+        #     angle_max = scan_msg.angle_max
+        #     angle_increment = scan_msg.angle_increment
+        #     num_ranges = len(scan_msg.ranges)
+        #     theta = max(angle_min, min(angle_max, theta))
+        #     index = int(round((theta - angle_min) / angle_increment))
+        #     return max(0, min(index, num_ranges - 1))
 
         for r in results:
             boxes = r.boxes
@@ -217,9 +319,20 @@ class ImageSubscriber(Node):
                 cls = box.cls[0]
                 name = self.classNames[int(cls)]
                 if name == "person":
+                    
+                    image_center_x = cols/2
+                    
 
                     cx = (x1+x2)/2
+
+                    relative_x = (cx - image_center_x)/cols
+                    max_angle = math.radians(60)
+
                     cy = (y1+y2)/2
+
+                    angle = relative_x*max_angle
+
+
                     print("YAYYY")
                     if not self.object_found:
                         detection_msg = Bool()
@@ -227,6 +340,8 @@ class ImageSubscriber(Node):
                         self.detection_pub.publish(detection_msg)
                         self.get_logger().info("Published object detection signal!")
                         self.object_found = True
+                        msg.angular.z = 0.0
+                        self.publisher.publish(msg)
 
                     # if abs(cols/2 - cx) > 20:
                     #     msg.linear.x = 0.0
@@ -238,56 +353,84 @@ class ImageSubscriber(Node):
                     # else:
                     #     msg.linear.x = 0.2
                     #     msg.angular.z = 0.0
-                    image_center_x = cols / 2
-                    relative_x = (cx - image_center_x) / cols
-                    lidar_fov = math.radians(180)  # adjust if your LiDAR has smaller FOV
+                    # image_center_x = cols / 2
+                    # relative_x = (cx - image_center_x) / cols
+                    # lidar_fov = math.radians(180)  # adjust if your LiDAR has smaller FOV
 
-                    # Estimate angle from center (in radians)
-                    theta = relative_x * (lidar_fov / 2)
+                    # # Estimate angle from center (in radians)
+                    # theta = relative_x * (lidar_fov / 2)
 
-                    # Safety stop distance
-                    stop_distance = 0.8  # meters
-                    scan = self.scan_data
-                    should_stop = False
+                    # # Safety stop distance
+                    # stop_distance = 0.8  # meters
+                    # scan = self.scan_data
+                    # self.should_stop = False
 
-                    if scan:
-                        center_index = angle_to_scan_index(theta, scan)
-                        spread_deg = 10
-                        spread_rad = math.radians(spread_deg)
-                        num_points = int(spread_rad / scan.angle_increment)
+                    # if scan:
+                    #     center_index = angle_to_scan_index(theta, scan)
+                    #     spread_deg = 10
+                    #     spread_rad = math.radians(spread_deg)
+                    #     num_points = int(spread_rad / scan.angle_increment)
 
-                        start = max(center_index - num_points, 0)
-                        end = min(center_index + num_points + 1, len(scan.ranges))
-                        distances = [scan.ranges[i] for i in range(start, end)
-                                     if math.isfinite(scan.ranges[i]) and scan.ranges[i] > 0.05]
+                    #     start = max(center_index - num_points, 0)
+                    #     end = min(center_index + num_points + 1, len(scan.ranges))
+                    #     distances = [scan.ranges[i] for i in range(start, end)
+                    #                  if math.isfinite(scan.ranges[i]) and scan.ranges[i] > 0.05]
 
-                        if distances and min(distances) < stop_distance:
-                            # should_stop = True
-                            pass
-                        elif not distances:
-                            self.get_logger().warn("No valid LiDAR data in object direction.")
-                    else:
-                        self.get_logger().warn("Waiting for LiDAR scan data...")
-                        # msg.linear.x = 0.0
-                        # msg.angular.z = 0.0
+                    #     if distances and min(distances) < stop_distance:
+                    #         # self.should_stop = True
+                    #         pass
+                    #     elif not distances:
+                    #         self.get_logger().warn("No valid LiDAR data in object direction.")
+                    # else:
+                    #     self.get_logger().warn("Waiting for LiDAR scan data...")
+                    #     # msg.linear.x = 0.0
+                    #     # msg.angular.z = 0.0
 
                     area = w * h
-                    if area > self.Area / 3 or h > 480 * 3 / 4 or w > 640 * 3 / 4:
-                        should_stop = True
+                    if area > self.Area / 3.5 or h > 480 * 3 / 4 or w > 640 * 3 / 4:
+                        self.should_stop = True
 
-                    if should_stop:
+                    if self.should_stop:
                         self.get_logger().info("I am stopping rahh")
                         msg.linear.x = 0.0
+                        msg.linear.y = 0.0
                         msg.angular.z = 0.0
-                    else:
-                        if abs(image_center_x - cx) > 20:
-                            self.get_logger().info("I am turning rahhh")
-                            msg.linear.x = 0.0
-                            msg.angular.z = 0.2 if image_center_x > cx else -0.2
-                        else:
-                            self.get_logger().info("I am going straight rahh")
-                            msg.linear.x = 0.2
+                        self.publisher.publish(msg)
+
+                        if self.goal_in_progress:
+                            self.get_logger().warn("Aborting current navigation goal!")
+                            self.nav_client._cancel_goal_async(self.current_goal_handle) 
+                            self.goal_in_progress = False
+
+                        return
+                        
+                    # else:
+                    #     if abs(image_center_x - cx) > 20:
+                    #         self.get_logger().info("I am turning rahhh")
+                    #         msg.linear.x = 0.0
+                    #         msg.angular.z = 0.2 if image_center_x > cx else -0.2
+                    #     else:
+                    #         self.get_logger().info("I am going straight rahh")
+                    #         msg.linear.x = 0.2
+                    #         msg.angular.z = 0.0
+
+                    if abs(cx-cols/2) < 30:
+                        if not self.send_stop_signal:
                             msg.angular.z = 0.0
+                            self.publisher.publish(msg)
+                            self.send_stop_signal = True
+                        if not self.should_stop:
+                            self.send_incremental_goal(angle)
+                        
+                    else:
+                        self.send_stop_signal = False
+                        if not self.goal_in_progress:
+                            if (cx-cols/2)>0:
+                                msg.angular.z = -0.2
+                            else:
+                                msg.angular.z = 0.2
+
+                            self.publisher.publish(msg)
 
 
                     
@@ -297,19 +440,21 @@ class ImageSubscriber(Node):
                 #     msg.linear.x = 0.0
                 #     msg.angular.z = 0.0
 
-                self.publisher.publish(msg)
+                # self.publisher.publish(msg)
                 # cvzone.putTextRect(img, f'{self.classNames[int(cls)]} {conf}', (x1,y1-20))
             if not any(self.classNames[int(b.cls[0])] == "person" for b in boxes):
                 
-                self.get_logger().info("I am stopping outside rahh")
-                msg.linear.x = 0.0
-                msg.angular.z = 0.0
-                self.publisher.publish(msg)
+                # self.get_logger().info("I am stopping outside rahh")
+                # msg.linear.x = 0.0
+                
 
-                if self.object_found:
+                if self.object_found and not self.goal_in_progress:
                     self.object_found = False
+                    msg.angular.z = 0.0
+                    self.publisher.publish(msg)
                     detection_msg = Bool()
                     detection_msg.data = False
+                    self.should_stop = False
                     self.detection_pub.publish(detection_msg)
                     self.get_logger().info("Object died resuming explore rahh")
                     
