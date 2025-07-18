@@ -1,0 +1,22 @@
+[1.351s] Invoking command in '/home/videep/ROS2/projectStuff/ros_bot/src/object_finder': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(videepsenv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ PYTHONPATH=/home/videep/ROS2/projectStuff/ros_bot/build/object_finder/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/videep/ROS2/projectStuff/ros_bot/install/object_finder/lib/python3.12/site-packages:${PYTHONPATH} VIRTUAL_ENV_PROMPT=(videepsenv) /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/object_finder build --build-base /home/videep/ROS2/projectStuff/ros_bot/build/object_finder/build install --record /home/videep/ROS2/projectStuff/ros_bot/build/object_finder/install.log --single-version-externally-managed install_data
+[1.818s] running egg_info
+[1.851s] writing ../../build/object_finder/object_finder.egg-info/PKG-INFO
+[1.851s] writing dependency_links to ../../build/object_finder/object_finder.egg-info/dependency_links.txt
+[1.852s] writing entry points to ../../build/object_finder/object_finder.egg-info/entry_points.txt
+[1.852s] writing requirements to ../../build/object_finder/object_finder.egg-info/requires.txt
+[1.852s] writing top-level names to ../../build/object_finder/object_finder.egg-info/top_level.txt
+[1.915s] reading manifest file '../../build/object_finder/object_finder.egg-info/SOURCES.txt'
+[1.915s] adding license file 'LICENSE'
+[1.916s] writing manifest file '../../build/object_finder/object_finder.egg-info/SOURCES.txt'
+[1.916s] running build
+[1.917s] running build_py
+[1.917s] running install
+[1.927s] running install_lib
+[1.960s] running install_data
+[1.960s] running install_egg_info
+[1.993s] removing '/home/videep/ROS2/projectStuff/ros_bot/install/object_finder/lib/python3.12/site-packages/object_finder-0.0.0-py3.12.egg-info' (and everything under it)
+[1.994s] Copying ../../build/object_finder/object_finder.egg-info to /home/videep/ROS2/projectStuff/ros_bot/install/object_finder/lib/python3.12/site-packages/object_finder-0.0.0-py3.12.egg-info
+[1.995s] running install_scripts
+[2.209s] Installing controller_node script to /home/videep/ROS2/projectStuff/ros_bot/install/object_finder/lib/object_finder
+[2.210s] writing list of installed files to '/home/videep/ROS2/projectStuff/ros_bot/build/object_finder/install.log'
+[2.257s] Invoked command in '/home/videep/ROS2/projectStuff/ros_bot/src/object_finder' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(videepsenv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ PYTHONPATH=/home/videep/ROS2/projectStuff/ros_bot/build/object_finder/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/videep/ROS2/projectStuff/ros_bot/install/object_finder/lib/python3.12/site-packages:${PYTHONPATH} VIRTUAL_ENV_PROMPT=(videepsenv) /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/object_finder build --build-base /home/videep/ROS2/projectStuff/ros_bot/build/object_finder/build install --record /home/videep/ROS2/projectStuff/ros_bot/build/object_finder/install.log --single-version-externally-managed install_data

@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "videeps_pkg__py",
+		"source" : "/home/videep/ROS2/projectStuff/ros_bot/build/videeps_pkg/videeps_pkg__py"
+	}
+}

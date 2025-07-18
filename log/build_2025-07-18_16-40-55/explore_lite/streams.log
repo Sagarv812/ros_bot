@@ -1,0 +1,55 @@
+[0.024s] Invoking command in '/home/videep/ROS2/projectStuff/ros_bot/build/explore_lite': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/videep/ROS2/install/py_srvcli:/home/videep/ROS2/install/py_pubsub:/home/videep/ROS2/install/python_parameters:/home/videep/ROS2/install/my_package:/home/videep/ROS2/install/launch_testing_examples:/home/videep/ROS2/install/examples_rclpy_pointcloud_publisher:/home/videep/ROS2/install/examples_rclpy_minimal_subscriber:/home/videep/ROS2/install/examples_rclpy_minimal_service:/home/videep/ROS2/install/examples_rclpy_minimal_publisher:/home/videep/ROS2/install/examples_rclpy_minimal_client:/home/videep/ROS2/install/examples_rclpy_minimal_action_server:/home/videep/ROS2/install/examples_rclpy_minimal_action_client:/home/videep/ROS2/install/examples_rclpy_guard_conditions:/home/videep/ROS2/install/examples_rclpy_executors:/home/videep/ROS2/install/bme_ros2_tutorials_py:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(videepsenv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ VIRTUAL_ENV_PROMPT=(videepsenv) /usr/bin/cmake /home/videep/ROS2/projectStuff/ros_bot/src/explore -DCMAKE_INSTALL_PREFIX=/home/videep/ROS2/projectStuff/ros_bot/install/explore_lite
+[0.115s] -- The C compiler identification is GNU 13.3.0
+[0.206s] -- The CXX compiler identification is GNU 13.3.0
+[0.233s] -- Detecting C compiler ABI info
+[0.379s] -- Detecting C compiler ABI info - done
+[0.394s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.394s] -- Detecting C compile features
+[0.395s] -- Detecting C compile features - done
+[0.413s] -- Detecting CXX compiler ABI info
+[0.576s] -- Detecting CXX compiler ABI info - done
+[0.592s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.592s] -- Detecting CXX compile features
+[0.593s] -- Detecting CXX compile features - done
+[0.594s] -- BuilD for ROS2: jazzy
+[0.602s] -- Found ament_cmake: 2.5.4 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.823s] -- Found Python3: /home/videep/.venvs/videepsenv/bin/python3 (found version "3.12.3") found components: Interpreter 
+[1.074s] -- Found rclcpp: 28.1.10 (/opt/ros/jazzy/share/rclcpp/cmake)
+[1.192s] -- Found rosidl_generator_c: 4.6.5 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)
+[1.229s] -- Found rosidl_generator_cpp: 4.6.5 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)
+[1.284s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[1.335s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.512s] -- Found rmw_implementation_cmake: 7.3.2 (/opt/ros/jazzy/share/rmw_implementation_cmake/cmake)
+[1.524s] -- Found rmw_fastrtps_cpp: 8.4.2 (/opt/ros/jazzy/share/rmw_fastrtps_cpp/cmake)
+[1.699s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.13")  
+[1.734s] -- Found FastRTPS: /opt/ros/jazzy/include (Required is at least version "2.13") 
+[1.774s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[1.903s] -- Found std_msgs: 5.3.6 (/opt/ros/jazzy/share/std_msgs/cmake)
+[1.923s] -- Found sensor_msgs: 5.3.6 (/opt/ros/jazzy/share/sensor_msgs/cmake)
+[1.978s] -- Found tf2_ros: 0.36.12 (/opt/ros/jazzy/share/tf2_ros/cmake)
+[2.191s] -- Found tf2_geometry_msgs: 0.36.12 (/opt/ros/jazzy/share/tf2_geometry_msgs/cmake)
+[2.227s] -- Found eigen3_cmake_module: 0.3.0 (/opt/ros/jazzy/share/eigen3_cmake_module/cmake)
+[2.229s] -- Found Eigen3: TRUE (found version "3.4.0") 
+[2.229s] -- Ensuring Eigen3 include directory is part of orocos-kdl CMake target
+[2.237s] -- Found nav2_msgs: 1.3.7 (/opt/ros/jazzy/share/nav2_msgs/cmake)
+[2.387s] -- Found map_msgs: 2.4.1 (/opt/ros/jazzy/share/map_msgs/cmake)
+[2.439s] -- Found visualization_msgs: 5.3.6 (/opt/ros/jazzy/share/visualization_msgs/cmake)
+[2.487s] -- Found nav2_costmap_2d: 1.3.7 (/opt/ros/jazzy/share/nav2_costmap_2d/cmake)
+[2.802s] -- Found ament_lint_auto: 0.17.2 (/opt/ros/jazzy/share/ament_lint_auto/cmake)
+[2.835s] Traceback (most recent call last):
+[2.836s]   File "/opt/ros/jazzy/share/ament_cmake_core/cmake/core/package_xml_2_cmake.py", line 22, in <module>
+[2.836s]     from catkin_pkg.package import parse_package_string
+[2.836s] ModuleNotFoundError: No module named 'catkin_pkg'
+[2.840s] [31mCMake Error at /opt/ros/jazzy/share/ament_cmake_core/cmake/core/ament_package_xml.cmake:95 (message):
+[2.840s]   execute_process(/home/videep/.venvs/videepsenv/bin/python3
+[2.841s]   /opt/ros/jazzy/share/ament_cmake_core/cmake/core/package_xml_2_cmake.py
+[2.841s]   /home/videep/ROS2/projectStuff/ros_bot/src/explore/package.xml
+[2.841s]   /home/videep/ROS2/projectStuff/ros_bot/build/explore_lite/ament_cmake_core/package.cmake)
+[2.841s]   returned error code 1
+[2.841s] Call Stack (most recent call first):
+[2.841s]   /opt/ros/jazzy/share/ament_cmake_core/cmake/core/ament_package_xml.cmake:49 (_ament_package_xml)
+[2.842s]   /opt/ros/jazzy/share/ament_lint_auto/cmake/ament_lint_auto_find_test_dependencies.cmake:31 (ament_package_xml)
+[2.842s]   CMakeLists.txt:108 (ament_lint_auto_find_test_dependencies)
+[2.842s] 
+[2.842s] [0m
+[2.842s] -- Configuring incomplete, errors occurred!

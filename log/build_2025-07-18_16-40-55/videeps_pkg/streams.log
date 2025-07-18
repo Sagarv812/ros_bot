@@ -1,0 +1,57 @@
+[0.033s] Invoking command in '/home/videep/ROS2/projectStuff/ros_bot/build/videeps_pkg': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/videep/ROS2/install/py_srvcli:/home/videep/ROS2/install/py_pubsub:/home/videep/ROS2/install/python_parameters:/home/videep/ROS2/install/my_package:/home/videep/ROS2/install/launch_testing_examples:/home/videep/ROS2/install/examples_rclpy_pointcloud_publisher:/home/videep/ROS2/install/examples_rclpy_minimal_subscriber:/home/videep/ROS2/install/examples_rclpy_minimal_service:/home/videep/ROS2/install/examples_rclpy_minimal_publisher:/home/videep/ROS2/install/examples_rclpy_minimal_client:/home/videep/ROS2/install/examples_rclpy_minimal_action_server:/home/videep/ROS2/install/examples_rclpy_minimal_action_client:/home/videep/ROS2/install/examples_rclpy_guard_conditions:/home/videep/ROS2/install/examples_rclpy_executors:/home/videep/ROS2/install/bme_ros2_tutorials_py:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(videepsenv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ VIRTUAL_ENV_PROMPT=(videepsenv) /usr/bin/cmake /home/videep/ROS2/projectStuff/ros_bot/src/videeps_pkg -DCMAKE_INSTALL_PREFIX=/home/videep/ROS2/projectStuff/ros_bot/install/videeps_pkg
+[0.132s] -- The C compiler identification is GNU 13.3.0
+[0.221s] -- The CXX compiler identification is GNU 13.3.0
+[0.250s] -- Detecting C compiler ABI info
+[0.402s] -- Detecting C compiler ABI info - done
+[0.420s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.420s] -- Detecting C compile features
+[0.422s] -- Detecting C compile features - done
+[0.439s] -- Detecting CXX compiler ABI info
+[0.603s] -- Detecting CXX compiler ABI info - done
+[0.620s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.621s] -- Detecting CXX compile features
+[0.622s] -- Detecting CXX compile features - done
+[0.631s] -- Found ament_cmake: 2.5.4 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.852s] -- Found Python3: /home/videep/.venvs/videepsenv/bin/python3 (found version "3.12.3") found components: Interpreter 
+[1.101s] -- Found geometry_msgs: 5.3.6 (/opt/ros/jazzy/share/geometry_msgs/cmake)
+[1.225s] -- Found rosidl_generator_c: 4.6.5 (/opt/ros/jazzy/share/rosidl_generator_c/cmake)
+[1.261s] -- Found rosidl_generator_cpp: 4.6.5 (/opt/ros/jazzy/share/rosidl_generator_cpp/cmake)
+[1.302s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[1.350s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.453s] -- Found rosidl_default_generators: 1.6.0 (/opt/ros/jazzy/share/rosidl_default_generators/cmake)
+[1.498s] -- Found rosidl_adapter: 4.6.5 (/opt/ros/jazzy/share/rosidl_adapter/cmake)
+[1.759s] [31mCMake Error at /opt/ros/jazzy/share/rosidl_adapter/cmake/rosidl_adapt_interfaces.cmake:57 (message):
+[1.759s]   execute_process(/home/videep/.venvs/videepsenv/bin/python3 -m
+[1.759s]   rosidl_adapter --package-name videeps_pkg --arguments-file
+[1.759s]   /home/videep/ROS2/projectStuff/ros_bot/build/videeps_pkg/rosidl_adapter__arguments__videeps_pkg.json
+[1.759s]   --output-dir
+[1.759s]   /home/videep/ROS2/projectStuff/ros_bot/build/videeps_pkg/rosidl_adapter/videeps_pkg
+[1.759s]   --output-file
+[1.759s]   /home/videep/ROS2/projectStuff/ros_bot/build/videeps_pkg/rosidl_adapter/videeps_pkg.idls)
+[1.759s]   returned error code 1:
+[1.760s] 
+[1.760s]   Traceback (most recent call last):
+[1.760s] 
+[1.760s]     File "<frozen runpy>", line 198, in _run_module_as_main
+[1.760s]     File "<frozen runpy>", line 88, in _run_code
+[1.760s]     File "/opt/ros/jazzy/lib/python3.12/site-packages/rosidl_adapter/__main__.py", line 19, in <module>
+[1.760s]       sys.exit(main())
+[1.760s]                ^^^^^^
+[1.760s]     File "/opt/ros/jazzy/lib/python3.12/site-packages/rosidl_adapter/main.py", line 53, in main
+[1.760s]       abs_idl_file = convert_to_idl(
+[1.760s]                      ^^^^^^^^^^^^^^^
+[1.760s]     File "/opt/ros/jazzy/lib/python3.12/site-packages/rosidl_adapter/__init__.py", line 23, in convert_to_idl
+[1.760s]       from rosidl_adapter.srv import convert_srv_to_idl
+[1.760s]     File "/opt/ros/jazzy/lib/python3.12/site-packages/rosidl_adapter/srv/__init__.py", line 16, in <module>
+[1.761s]       from rosidl_adapter.resource import expand_template
+[1.761s]     File "/opt/ros/jazzy/lib/python3.12/site-packages/rosidl_adapter/resource/__init__.py", line 19, in <module>
+[1.761s]       import em
+[1.761s] 
+[1.761s]   ModuleNotFoundError: No module named 'em'
+[1.761s] 
+[1.761s] Call Stack (most recent call first):
+[1.761s]   /opt/ros/jazzy/share/rosidl_cmake/cmake/rosidl_generate_interfaces.cmake:132 (rosidl_adapt_interfaces)
+[1.761s]   CMakeLists.txt:11 (rosidl_generate_interfaces)
+[1.761s] 
+[1.761s] [0m
+[1.761s] -- Configuring incomplete, errors occurred!

@@ -27,6 +27,7 @@ setup(
             'gps_waypoint_follower = bme_gazebo_sensors_py.gps_waypoint_follower:main',
             'chase_the_ball = bme_gazebo_sensors_py.chase_the_ball:main',
             'object_detect = bme_gazebo_sensors_py.object_detection:main',
+            'set_target_client = bme_gazebo_sensors_py.set_target_client:main',
         ],
     },
 )
