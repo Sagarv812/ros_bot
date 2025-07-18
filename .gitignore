@@ -1,5 +1,7 @@
 .vscode/
-log/
 .venv/
 build/
 install/
+~/
+yolobot/
+log/
