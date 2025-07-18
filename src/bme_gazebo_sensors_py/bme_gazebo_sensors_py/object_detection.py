@@ -59,7 +59,7 @@ class ImageSubscriber(Node):
 
         self.Area = 640*480
 
-        self.model = yolo('~/yolobot/yolov8l.pt')
+        self.model = yolo('yolobot/yolov8l.pt')
         self.img_pub = self.create_publisher(Image, "/detection", 1)
 
         self.classNames = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train", "truck", "boat",
