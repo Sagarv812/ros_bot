@@ -37,6 +37,8 @@
  *********************************************************************/
 
 #include <explore/explore.h>
+#include "nav2_msgs/srv/clear_entire_costmap.hpp"
+#include "slam_toolbox/srv/reset.hpp"
 
 #include <thread>
 
@@ -68,7 +70,7 @@ Explore::Explore()
   this->declare_parameter<float>("orientation_scale", 0.0);
   this->declare_parameter<float>("gain_scale", 1.0);
   this->declare_parameter<float>("min_frontier_size", 0.5);
-  this->declare_parameter<bool>("return_to_init", false);
+  // this->declare_parameter<bool>("return_to_init", false);
 
   this->get_parameter("planner_frequency", planner_frequency_);
   this->get_parameter("progress_timeout", timeout);
@@ -77,7 +79,7 @@ Explore::Explore()
   this->get_parameter("orientation_scale", orientation_scale_);
   this->get_parameter("gain_scale", gain_scale_);
   this->get_parameter("min_frontier_size", min_frontier_size);
-  this->get_parameter("return_to_init", return_to_init_);
+  // this->get_parameter("return_to_init", return_to_init_);
   this->get_parameter("robot_base_frame", robot_base_frame_);
 
   progress_timeout_ = timeout;
@@ -106,22 +108,22 @@ Explore::Explore()
   move_base_client_->wait_for_action_server();
   RCLCPP_INFO(logger_, "Connected to move_base nav2 server");
 
-  if (return_to_init_) {
-    RCLCPP_INFO(logger_, "Getting initial pose of the robot");
-    geometry_msgs::msg::TransformStamped transformStamped;
-    std::string map_frame = costmap_client_.getGlobalFrameID();
-    try {
-      transformStamped = tf_buffer_.lookupTransform(
-          map_frame, robot_base_frame_, tf2::TimePointZero);
-      initial_pose_.position.x = transformStamped.transform.translation.x;
-      initial_pose_.position.y = transformStamped.transform.translation.y;
-      initial_pose_.orientation = transformStamped.transform.rotation;
-    } catch (tf2::TransformException& ex) {
-      RCLCPP_ERROR(logger_, "Couldn't find transform from %s to %s: %s",
-                   map_frame.c_str(), robot_base_frame_.c_str(), ex.what());
-      return_to_init_ = false;
-    }
-  }
+  // if (return_to_init_) {
+  //   RCLCPP_INFO(logger_, "Getting initial pose of the robot");
+  //   geometry_msgs::msg::TransformStamped transformStamped;
+  //   std::string map_frame = costmap_client_.getGlobalFrameID();
+  //   try {
+  //     transformStamped = tf_buffer_.lookupTransform(
+  //         map_frame, robot_base_frame_, tf2::TimePointZero);
+  //     initial_pose_.position.x = transformStamped.transform.translation.x;
+  //     initial_pose_.position.y = transformStamped.transform.translation.y;
+  //     initial_pose_.orientation = transformStamped.transform.rotation;
+  //   } catch (tf2::TransformException& ex) {
+  //     RCLCPP_ERROR(logger_, "Couldn't find transform from %s to %s: %s",
+  //                  map_frame.c_str(), robot_base_frame_.c_str(), ex.what());
+  //     return_to_init_ = false;
+  //   }
+  // }
 
   exploring_timer_ = this->create_wall_timer(
       std::chrono::milliseconds((uint16_t)(1000.0 / planner_frequency_)),
@@ -238,6 +240,10 @@ void Explore::visualizeFrontiers(
 
 void Explore::makePlan()
 {
+
+
+
+
   // find frontiers
   auto pose = costmap_client_.getRobotPose();
   // get frontiers sorted according to cost
@@ -322,19 +328,19 @@ void Explore::makePlan()
   move_base_client_->async_send_goal(goal, send_goal_options);
 }
 
-void Explore::returnToInitialPose()
-{
-  RCLCPP_INFO(logger_, "Returning to initial pose.");
-  auto goal = nav2_msgs::action::NavigateToPose::Goal();
-  goal.pose.pose.position = initial_pose_.position;
-  goal.pose.pose.orientation = initial_pose_.orientation;
-  goal.pose.header.frame_id = costmap_client_.getGlobalFrameID();
-  goal.pose.header.stamp = this->now();
+// void Explore::returnToInitialPose()
+// {
+//   RCLCPP_INFO(logger_, "Returning to initial pose.");
+//   auto goal = nav2_msgs::action::NavigateToPose::Goal();
+//   goal.pose.pose.position = initial_pose_.position;
+//   goal.pose.pose.orientation = initial_pose_.orientation;
+//   goal.pose.header.frame_id = costmap_client_.getGlobalFrameID();
+//   goal.pose.header.stamp = this->now();
 
-  auto send_goal_options =
-      rclcpp_action::Client<nav2_msgs::action::NavigateToPose>::SendGoalOptions();
-  move_base_client_->async_send_goal(goal, send_goal_options);
-}
+//   auto send_goal_options =
+//       rclcpp_action::Client<nav2_msgs::action::NavigateToPose>::SendGoalOptions();
+//   move_base_client_->async_send_goal(goal, send_goal_options);
+// }
 
 bool Explore::goalOnBlacklist(const geometry_msgs::msg::Point& goal)
 {
@@ -388,6 +394,98 @@ void Explore::reachedGoal(const NavigationGoalHandle::WrappedResult& result,
   makePlan();
 }
 
+// bool Explore::isBackAtInitialPose() {
+//   geometry_msgs::msg::TransformStamped transformStamped;
+//   std::string map_frame = costmap_client_.getGlobalFrameID();
+//   try {
+//     transformStamped = tf_buffer_.lookupTransform(
+//         map_frame, robot_base_frame_, tf2::TimePointZero);
+//   } catch (tf2::TransformException& ex) {
+//     RCLCPP_WARN(logger_, "TF lookup failed: %s", ex.what());
+//     return false;
+//   }
+
+//   double dx = transformStamped.transform.translation.x - initial_pose_.position.x;
+//   double dy = transformStamped.transform.translation.y - initial_pose_.position.y;
+//   double distance = sqrt(dx * dx + dy * dy);
+//   return distance < 0.1;  // 10 cm threshold
+// }
+
+void Explore::resetExplorationState() {
+  // costmap_client_.clear();
+  prev_goal_ = geometry_msgs::msg::Point();
+  progress_timeout_ = this->get_parameter("progress_timeout").as_double();
+  last_markers_count_ = 0;
+  RCLCPP_INFO(logger_, "Exploration state RESET — starting over!");
+  auto global_costmap_client = this->create_client<nav2_msgs::srv::ClearEntireCostmap>("/global_costmap/clear_entirely_global_costmap");
+  if (global_costmap_client->wait_for_service(std::chrono::seconds(2))) {
+    auto request = std::make_shared<nav2_msgs::srv::ClearEntireCostmap::Request>();
+    global_costmap_client->async_send_request(request);
+    RCLCPP_INFO(this->get_logger(), "Requested global costmap clear.");
+  } else {
+    RCLCPP_WARN(this->get_logger(), "Global costmap clear service not available.");
+  }
+
+  // --- Clear local costmap too (optional) ---
+  auto local_costmap_client = this->create_client<nav2_msgs::srv::ClearEntireCostmap>("/local_costmap/clear_entirely_local_costmap");
+  if (local_costmap_client->wait_for_service(std::chrono::seconds(2))) {
+    auto request = std::make_shared<nav2_msgs::srv::ClearEntireCostmap::Request>();
+    local_costmap_client->async_send_request(request);
+    RCLCPP_INFO(this->get_logger(), "Requested local costmap clear.");
+  } else {
+    RCLCPP_WARN(this->get_logger(), "Local costmap clear service not available.");
+  }
+
+  // --- Reset SLAM map ---
+  auto slam_reset_client = this->create_client<slam_toolbox::srv::Reset>("/slam_toolbox/reset");
+  if (slam_reset_client->wait_for_service(std::chrono::seconds(2))) {
+    auto request = std::make_shared<slam_toolbox::srv::Reset::Request>();
+    slam_reset_client->async_send_request(request);
+    RCLCPP_INFO(this->get_logger(), "Requested SLAM map reset.");
+  } else {
+    RCLCPP_WARN(this->get_logger(), "SLAM reset service not available.");
+  }
+  
+  RCLCPP_INFO(logger_, "Waiting for sensors map update...");
+  // Instead of plain resume:
+  spinGoal();
+
+}
+
+void Explore::spinGoal()
+{
+  RCLCPP_INFO(logger_, "Spinning in place to refresh sensors.");
+
+  auto goal = nav2_msgs::action::NavigateToPose::Goal();
+  goal.pose.header.frame_id = costmap_client_.getGlobalFrameID();
+  goal.pose.header.stamp = this->now();
+
+  // Keep same position
+  auto pose = costmap_client_.getRobotPose();
+  goal.pose.pose.position = pose.position;
+
+  // Just change orientation: 180 deg spin for example
+  tf2::Quaternion q_orig, q_rot, q_new;
+  tf2::fromMsg(pose.orientation, q_orig);
+  q_rot.setRPY(0, 0, M_PI);  // Rotate 180 deg
+  q_new = q_rot * q_orig;
+  q_new.normalize();
+  goal.pose.pose.orientation = tf2::toMsg(q_new);
+
+  auto send_goal_options = rclcpp_action::Client<nav2_msgs::action::NavigateToPose>::SendGoalOptions();
+  send_goal_options.result_callback = [this](const NavigationGoalHandle::WrappedResult& result) {
+    if (result.code == rclcpp_action::ResultCode::SUCCEEDED) {
+      RCLCPP_INFO(logger_, "Spin goal succeeded, resuming exploration.");
+    } else {
+      RCLCPP_WARN(logger_, "Spin goal failed or canceled, resuming anyway.");
+    }
+    // After spin, continue normal exploration
+    resume();
+  };
+
+  move_base_client_->async_send_goal(goal, send_goal_options);
+}
+
 void Explore::start()
 {
   RCLCPP_INFO(logger_, "Exploration started.");
@@ -399,8 +497,8 @@ void Explore::stop(bool finished_exploring)
   move_base_client_->async_cancel_all_goals();
   exploring_timer_->cancel();
 
-  if (return_to_init_ && finished_exploring) {
-    returnToInitialPose();
+  if (finished_exploring) {
+    resetExplorationState();
   }
 }
 

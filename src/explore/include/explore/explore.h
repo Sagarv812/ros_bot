@@ -132,6 +132,9 @@ private:
   geometry_msgs::msg::Pose initial_pose_;
   void returnToInitialPose(void);
 
+  bool isBackAtInitialPose();
+  void resetExplorationState();
+  void spinGoal();
   // parameters
   double planner_frequency_;
   double potential_scale_, orientation_scale_, gain_scale_;
