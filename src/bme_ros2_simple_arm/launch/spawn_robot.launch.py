@@ -80,40 +80,40 @@ def generate_launch_description():
         ]
     )
 
-    world_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_bme_ros2_simple_arm, 'launch', 'world.launch.py'),
-        ),
-        launch_arguments={
-        'world': LaunchConfiguration('world'),
-        }.items()
-    )
+    # world_launch = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         os.path.join(pkg_bme_ros2_simple_arm, 'launch', 'world.launch.py'),
+    #     ),
+    #     launch_arguments={
+    #     'world': LaunchConfiguration('world'),
+    #     }.items()
+    # )
 
     # Launch rviz
-    rviz_node = Node(
-        package='rviz2',
-        executable='rviz2',
-        arguments=['-d', PathJoinSubstitution([pkg_bme_ros2_simple_arm, 'rviz', LaunchConfiguration('rviz_config')])],
-        condition=IfCondition(LaunchConfiguration('rviz')),
-        parameters=[
-            {'use_sim_time': LaunchConfiguration('use_sim_time')},
-        ]
-    )
+    # rviz_node = Node(
+    #     package='rviz2',
+    #     executable='rviz2',
+    #     arguments=['-d', PathJoinSubstitution([pkg_bme_ros2_simple_arm, 'rviz', LaunchConfiguration('rviz_config')])],
+    #     condition=IfCondition(LaunchConfiguration('rviz')),
+    #     parameters=[
+    #         {'use_sim_time': LaunchConfiguration('use_sim_time')},
+    #     ]
+    # )
 
     # Spawn the URDF model using the `/world/<world_name>/create` service
-    spawn_urdf_node = Node(
-        package="ros_gz_sim",
-        executable="create",
-        arguments=[
-            "-name", "mogi_arm",
-            "-topic", "robot_description",
-            "-x", LaunchConfiguration('x'), "-y", LaunchConfiguration('y'), "-z", LaunchConfiguration('z'), "-Y", LaunchConfiguration('yaw')  # Initial spawn position
-        ],
-        output="screen",
-        parameters=[
-            {'use_sim_time': LaunchConfiguration('use_sim_time')},
-        ]
-    )
+    # spawn_urdf_node = Node(
+    #     package="ros_gz_sim",
+    #     executable="create",
+    #     arguments=[
+    #         "-name", "mogi_arm",
+    #         "-topic", "robot_description",
+    #         "-x", LaunchConfiguration('x'), "-y", LaunchConfiguration('y'), "-z", LaunchConfiguration('z'), "-Y", LaunchConfiguration('yaw')  # Initial spawn position
+    #     ],
+    #     output="screen",
+    #     parameters=[
+    #         {'use_sim_time': LaunchConfiguration('use_sim_time')},
+    #     ]
+    # )
 
     # Node to bridge topics between ROS and Gazebo
     gz_bridge_node = Node(
@@ -174,34 +174,32 @@ def generate_launch_description():
         package="ros_gz_image",
         executable="image_bridge",
         arguments=[
-            "/wrist_camera/image",
-            "/base_camera/image",
+            "/camera/image",
         ],
         output="screen",
         parameters=[
             {'use_sim_time': LaunchConfiguration('use_sim_time'),
-             'wrist_camera.image.compressed.jpeg_quality': 75,
-             'base_camera.image.compressed.jpeg_quality': 75 },  ],
+             'camera.image.compressed.jpeg_quality': 75 },  ],
     )
 
     # Relay node to republish camera_info to image/camera_info
-    relay_wrist_camera_info_node = Node(
-        package='topic_tools',
-        executable='relay',
-        name='relay_camera_info',
-        output='screen',
-        arguments=['wrist_camera/camera_info', 'wrist_camera/image/camera_info'],
-        parameters=[
-            {'use_sim_time': LaunchConfiguration('use_sim_time')},
-        ]
-    )
+    # relay_wrist_camera_info_node = Node(
+    #     package='topic_tools',
+    #     executable='relay',
+    #     name='relay_camera_info',
+    #     output='screen',
+    #     arguments=['wrist_camera/camera_info', 'wrist_camera/image/camera_info'],
+    #     parameters=[
+    #         {'use_sim_time': LaunchConfiguration('use_sim_time')},
+    #     ]
+    # )
 
-    relay_base_camera_info_node = Node(
+    relay_camera_info_node = Node(
         package='topic_tools',
         executable='relay',
         name='relay_camera_info',
         output='screen',
-        arguments=['base_camera/camera_info', 'base_camera/image/camera_info'],
+        arguments=['camera/camera_info', 'camera/image/camera_info'],
         parameters=[
             {'use_sim_time': LaunchConfiguration('use_sim_time')},
         ]
@@ -227,8 +225,7 @@ def generate_launch_description():
     launchDescriptionObject.add_action(joint_trajectory_controller_spawner)
     #launchDescriptionObject.add_action(joint_state_broadcaster_spawner)
     launchDescriptionObject.add_action(gz_image_bridge_node)
-    launchDescriptionObject.add_action(relay_wrist_camera_info_node)
-    launchDescriptionObject.add_action(relay_base_camera_info_node)
+    launchDescriptionObject.add_action(relay_camera_info_node)
 
 
     return launchDescriptionObject

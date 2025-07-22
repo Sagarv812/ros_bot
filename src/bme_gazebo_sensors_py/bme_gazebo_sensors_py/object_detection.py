@@ -13,6 +13,7 @@ import math
 from sensor_msgs.msg import LaserScan
 from std_msgs.msg import Bool 
 from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import Point
 from nav2_msgs.action import NavigateToPose
 from rclpy.action import ActionClient
 import tf2_ros
@@ -29,7 +30,28 @@ class ImageSubscriber(Node):
             self.image_callback,
             1  # Queue size of 1
         )
+        
+        self.point_publisher = self.create_publisher(
+            Point,
+            "/centroid",
+            10
+        )
+        
+        self.picked_object = self.create_subscription(
+            Bool,
+            "/arm_controller/is_moving",
+            self.picked_object_callback,
+            10
+        )
+        
+        self.found_object_pb = self.create_publisher(
+            Bool,
+            "/arm_controller/found_object",
+            10
+        )
 
+        self.picking_object = False 
+        
         self.goal_in_progress = False
 
         self.nav_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
@@ -181,6 +203,9 @@ class ImageSubscriber(Node):
         send_future.add_done_callback(goal_response_callback)
 
 
+    def picked_object_callback(self, msg):
+        self.picking_object = msg.data
+    
     def image_callback(self, msg):
         """Callback function to receive and store the latest frame."""
         # Convert ROS Image message to OpenCV format and store it
@@ -343,6 +368,12 @@ class ImageSubscriber(Node):
 
                     cy = (y1+y2)/2
 
+                    cmsg = Point()
+                    cmsg.x = cx
+                    cmsg.y = cy 
+                    cmsg.z = 0
+                    self.point_publisher.publish(cmsg)
+                    
                     angle = relative_x*max_angle
 
 
@@ -409,6 +440,9 @@ class ImageSubscriber(Node):
                         msg.linear.y = 0.0
                         msg.angular.z = 0.0
                         self.publisher.publish(msg)
+                        found_object = Bool()
+                        found_object.data = True
+                        self.found_object_pb.publish(found_object)
 
                         if self.goal_in_progress:
                             self.get_logger().warn("Aborting current navigation goal!")
@@ -461,7 +495,7 @@ class ImageSubscriber(Node):
                 # msg.linear.x = 0.0
                 
 
-                if self.object_found and not self.goal_in_progress:
+                if self.object_found and not self.goal_in_progress and not self.picking_object:
                     self.object_found = False
                     msg.angular.z = 0.0
                     self.publisher.publish(msg)
