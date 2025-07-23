@@ -27,6 +27,12 @@ class JointAnglePublisher(Node):
             self.object_callback,
             10
         )
+        
+        self.found_object_pb = self.create_publisher(
+            Bool,
+            "/arm_controller/found_object",
+            10
+        )
 
         self.get_logger().info('JointAnglePublisher ready and listening to /Object_positon')
 
@@ -59,6 +65,9 @@ class JointAnglePublisher(Node):
         
         self.is_moving = False
         self.has_moved = True
+        lmao = Bool()
+        lmao.data = False
+        self.found_object_pb.publish(lmao)
 
     def publish_trajectory(self, x, y, z, gripper_status, delay_sec=2):
         joint_angles = self.inverse_kinematics([x, y, z], gripper_status=gripper_status, gripper_angle=0)

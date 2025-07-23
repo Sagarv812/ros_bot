@@ -13,26 +13,27 @@ from std_msgs.msg import Bool
 
 
 
-class ImageSubscriber(Node):
+class ImageSubscriber1(Node):
     def __init__(self):
-        super().__init__('image_subscriber')
+        super().__init__('image_subscriber1')
         
         # Create a subscriber with a queue size of 1 to only keep the last frame
         self.subscription = self.create_subscription(
             Image,
-            'camera/image',
+            '/camera/image',
             self.image_callback,
-            10  # Queue size of 1
+            1  # Queue size of 1
         )
         self.depth_sub = self.create_subscription(
             Image,
-            'camera/depth_image',
+            '/camera/depth_image',
             self.depth_callback,
-            10
+            1
         )
+        
         self.camera_info_sub = self.create_subscription(
             CameraInfo,
-            'camera/camera_info',
+            '/camera/camera_info',
             self.camera_info_callback,
             10
         )
@@ -89,12 +90,13 @@ class ImageSubscriber(Node):
 
     def found_callback(self, msg):
         self.object_found = msg.data
+        self.get_logger().info("Found is Received")
     
     def centroid_callback(self, msg):
         
         # if not self.object_found:
         #     return
-        
+        self.get_logger().info("Centroid is Received")
         self.x = msg.x
         self.y = msg.y
     
@@ -105,9 +107,11 @@ class ImageSubscriber(Node):
         
         """Callback function to receive and store the latest frame."""
         # Convert ROS Image message to OpenCV format and store it
+        self.get_logger().info("image is Received")
         self.latest_frame = self.bridge.imgmsg_to_cv2(msg, "bgr8")
         self.latest_image_stamp = msg.header.stamp
-
+    
+        
     def depth_callback(self,depth_msg):
         
         # if not self.object_found:
@@ -115,6 +119,7 @@ class ImageSubscriber(Node):
         
         """Callback to receive latest depth image."""
         self.latest_depth_frame = self.bridge.imgmsg_to_cv2(depth_msg, desired_encoding='passthrough')
+        self.get_logger().info("depth is Received")
    
     def camera_info_callback(self, msg):
         """Extract camera intrinsics from CameraInfo message."""
@@ -130,29 +135,36 @@ class ImageSubscriber(Node):
 
     def display_image(self):
         
-        if not self.object_found:
-            return
+        self.get_logger().info("imaerwgwrgwtrgrtwwwv")
         
         """Main loop to process and display the latest frame."""
         # Create a single OpenCV window
         cv2.namedWindow("frame", cv2.WINDOW_NORMAL)
         cv2.resizeWindow("frame", 800,600)
 
+        self.get_logger().info("fuckedv")
+        
         while rclpy.ok():
-            # Check if there is a new frame available
-            if self.latest_frame is not None:
+            
+            # self.get_logger().info("slightly less fucked")
+            
+            if self.object_found:
+                # Check if there is a new frame available
+                self.get_logger().info("Hey I am running ")
+                if self.latest_frame is not None:
 
-                # Process the current image
-                self.process_image(self.latest_frame)
+                    self.get_logger().info("Hey I got the latest frame")
+                    # Process the current image
+                    self.process_image(self.latest_frame)
 
-                # Show the latest frame
-                cv2.imshow("frame", self.latest_frame)
-                self.latest_frame = None  # Clear the frame after displaying
+                    # Show the latest frame
+                    cv2.imshow("frame", self.latest_frame)
+                    self.latest_frame = None  # Clear the frame after displaying
 
-            # Check for quit key
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                self.running = False
-                break
+                # Check for quit key
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    self.running = False
+                    break
 
             rclpy.spin_once(self, timeout_sec=0.05)
 
@@ -180,8 +192,8 @@ class ImageSubscriber(Node):
                 u = int(M['m10'] / M['m00'])
                 v = int(M['m01'] / M['m00'])
                 
-                u = self.x
-                v = self.y
+                u = int(self.x)
+                v = int(self.y)
             
 
                 if self.latest_depth_frame is not None:
@@ -243,7 +255,7 @@ def main(args=None):
         print("OpenCV version: %s" % cv2.__version__)
 
         rclpy.init(args=args)
-        node = ImageSubscriber()
+        node = ImageSubscriber1()
         
         try:
             node.display_image()  # Run the display loop

@@ -73,13 +73,13 @@
     </sensor>
   </gazebo> 
   lololo -->
-  <gazebo reference="camera_link">
+  <!-- <gazebo reference="camera_link">
     <sensor name="camera" type="rgbd_camera">
       <camera>
         <horizontal_fov>1.25</horizontal_fov>
         <image>
-          <width>640</width>
-          <height>480</height>
+          <width>320</width>
+          <height>240</height>
         </image>
         <clip>
           <near>0.1</near>
@@ -94,7 +94,45 @@
       <topic>camera/image</topic>
       <gz_frame_id>camera_link</gz_frame_id>
     </sensor>
-  </gazebo>
+  </gazebo> -->
+
+  <gazebo reference="camera_link">
+  <sensor name="camera" type="rgbd_camera">
+    <camera>
+      <horizontal_fov>1.25</horizontal_fov>
+      <image>
+        <width>320</width>
+        <height>240</height>
+      </image>
+      <clip>
+        <near>0.1</near>
+        <far>15</far>
+      </clip>
+      <optical_frame_id>camera_link_optical</optical_frame_id>
+      <camera_info_topic>camera/rgb/camera_info</camera_info_topic>
+    </camera>
+
+    <depth_camera>
+      <image>
+        <width>320</width>
+        <height>240</height>
+      </image>
+      <clip>
+        <near>0.1</near>
+        <far>15</far>
+      </clip>
+      <camera_info_topic>camera/depth/camera_info</camera_info_topic>
+    </depth_camera>
+
+    <always_on>1</always_on>
+    <update_rate>20</update_rate>
+    <visualize>true</visualize>
+
+    <topic>camera</topic> <!-- Base topic, Gazebo will create subtopics like camera/rgb/image_raw and camera/depth/image_raw -->
+    <gz_frame_id>camera_link</gz_frame_id>
+  </sensor>
+</gazebo>
+
 
 
 
