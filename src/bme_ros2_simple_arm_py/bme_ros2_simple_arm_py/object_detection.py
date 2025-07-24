@@ -57,6 +57,8 @@ class ImageSubscriber1(Node):
             self.found_callback,
             10
         )
+        
+        
 
         self.x = None
         self.y = None
@@ -88,6 +90,8 @@ class ImageSubscriber1(Node):
 
 #   callback
 
+
+    
     def found_callback(self, msg):
         self.object_found = msg.data
         self.get_logger().info("Found is Received")
@@ -139,8 +143,8 @@ class ImageSubscriber1(Node):
         
         """Main loop to process and display the latest frame."""
         # Create a single OpenCV window
-        cv2.namedWindow("frame", cv2.WINDOW_NORMAL)
-        cv2.resizeWindow("frame", 800,600)
+        # cv2.namedWindow("frame", cv2.WINDOW_NORMAL)
+        # cv2.resizeWindow("frame", 800,600)
 
         self.get_logger().info("fuckedv")
         
@@ -158,7 +162,7 @@ class ImageSubscriber1(Node):
                     self.process_image(self.latest_frame)
 
                     # Show the latest frame
-                    cv2.imshow("frame", self.latest_frame)
+                    # cv2.imshow("frame", self.latest_frame)
                     self.latest_frame = None  # Clear the frame after displaying
 
                 # Check for quit key

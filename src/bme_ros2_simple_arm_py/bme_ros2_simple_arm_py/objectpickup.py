@@ -33,6 +33,12 @@ class JointAnglePublisher(Node):
             "/arm_controller/found_object",
             10
         )
+        
+        self.picked_object_pb = self.create_publisher(
+            Bool,
+            "/arm_controller/picked_object",
+            10
+        )
 
         self.get_logger().info('JointAnglePublisher ready and listening to /Object_positon')
 
@@ -57,9 +63,10 @@ class JointAnglePublisher(Node):
         self.get_logger().info(f"Received object at: x={x:.2f}, y={y:.2f}, z={z:.2f}")
 
         self.publish_trajectory(x, y, z + 0.15, "open", 10)   # Approach from top
-        self.publish_trajectory(x, y, z, "open", 5)          # Move straight down
-        self.publish_trajectory(x, y, z, "closed", 2)        # Close gripper
-        self.publish_trajectory(x, y, z + 0.15, "closed", 3) # Lift up
+        self.publish_trajectory(x-0.03, y, z-0.03, "open", 5)          # Move straight down
+        self.publish_trajectory(x-0.03, y, z-0.03, "closed", 2)        # Close gripper
+        self.publish_trajectory(x, y, z + 0.21, "closed", 3) # Lift up
+        self.publish_trajectory(x-0.1, y, z + 0.25, "closed", 3) # move back
 
         self.get_logger().info("Pick-up sequence complete.")
         
@@ -67,7 +74,12 @@ class JointAnglePublisher(Node):
         self.has_moved = True
         lmao = Bool()
         lmao.data = False
+        
+        picked = Bool()
+        picked.data = self.has_moved
+        
         self.found_object_pb.publish(lmao)
+        self.picked_object_pb.publish(picked)
 
     def publish_trajectory(self, x, y, z, gripper_status, delay_sec=2):
         joint_angles = self.inverse_kinematics([x, y, z], gripper_status=gripper_status, gripper_angle=0)
