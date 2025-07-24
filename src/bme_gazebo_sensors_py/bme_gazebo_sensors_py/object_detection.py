@@ -13,6 +13,7 @@ import math
 from sensor_msgs.msg import LaserScan
 from std_msgs.msg import Bool 
 from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import Point
 from nav2_msgs.action import NavigateToPose
 from rclpy.action import ActionClient
 import tf2_ros
@@ -29,7 +30,35 @@ class ImageSubscriber(Node):
             self.image_callback,
             1  # Queue size of 1
         )
+        
+        self.depth_sub = self.create_subscription(
+            Image,
+            '/camera/depth_image',
+            self.depth_callback,
+            1
+        )
+        
+        self.point_publisher = self.create_publisher(
+            Point,
+            "/centroid",
+            10
+        )
+        
+        self.picked_object = self.create_subscription(
+            Bool,
+            "/arm_controller/is_moving",
+            self.picked_object_callback,
+            10
+        )
+        
+        self.found_object_pb = self.create_publisher(
+            Bool,
+            "/arm_controller/found_object",
+            10
+        )
 
+        self.picking_object = False 
+        
         self.goal_in_progress = False
 
         self.nav_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
@@ -43,6 +72,7 @@ class ImageSubscriber(Node):
         self.detection_pub = self.create_publisher(Bool, "/object_detected", 10)
         self.object_found = False
         self.should_stop = False
+        self.should_stop_turning = False
 
         self.scan_data = None
         self.create_subscription(LaserScan, '/scan', self.scan_callback, 10)
@@ -51,13 +81,16 @@ class ImageSubscriber(Node):
 
         self.step_distance = 0.3
         self.error_count = 0
+        self.z = float("inf")
 
         self.send_stop_signal = False
+        
+        self.latest_depth_frame = None
         
         # Initialize CvBridge
         self.bridge = CvBridge()
 
-        self.Area = 640*480
+        self.Area = 320*240
 
         self.model = yolo('yolobot/yolov8l.pt')
         self.img_pub = self.create_publisher(Image, "/detection", 1)
@@ -85,9 +118,18 @@ class ImageSubscriber(Node):
         self.spin_thread.start()
         
         #to receive the object to follow 
-        self.target_object = "person"
+        self.target_object = "fire hydrant"
         self.srv = self.create_service(SetTargetObject, 'set_target_object', self.set_target_callback)
         self.get_logger().info("Searching for object")
+    
+    def depth_callback(self,depth_msg):
+        
+        # if not self.object_found:
+        #     return
+        
+        """Callback to receive latest depth image."""
+        self.latest_depth_frame = self.bridge.imgmsg_to_cv2(depth_msg, desired_encoding='passthrough')
+        self.get_logger().info("depth is Received")
         
     def set_target_callback(self, request, response):
         self.target_object = request.object_name
@@ -174,6 +216,8 @@ class ImageSubscriber(Node):
                     self.error_count = 0
                     self.step_distance = 0.3
                     self.get_logger().warn(f"Goal ended with status: {code}")
+                
+                    
                 self.goal_in_progress = False  # Ready for next goal
 
             result_future.add_done_callback(result_callback)
@@ -181,6 +225,9 @@ class ImageSubscriber(Node):
         send_future.add_done_callback(goal_response_callback)
 
 
+    def picked_object_callback(self, msg):
+        self.picking_object = msg.data
+    
     def image_callback(self, msg):
         """Callback function to receive and store the latest frame."""
         # Convert ROS Image message to OpenCV format and store it
@@ -205,7 +252,7 @@ class ImageSubscriber(Node):
                 # identfied = self.process_image(self.latest_frame.copy())
                 self.identify_image(self.latest_frame.copy())
                 # Show the latest frame
-                cv2.imshow("frame", self.latest_frame)
+                # cv2.imshow("frame", self.latest_frame)
                 # cv2.imshow("objects", identfied)
                 # cv2.imshow("mask", mask)
                 # cv2.imshow("contour", contour)
@@ -343,6 +390,13 @@ class ImageSubscriber(Node):
 
                     cy = (y1+y2)/2
 
+                    self.z = self.latest_depth_frame[int(cy), int(cx)]
+                    cmsg = Point()
+                    cmsg.x = float(cx)
+                    cmsg.y = float(cy) 
+                    cmsg.z = 0.0
+                    self.point_publisher.publish(cmsg)
+                    
                     angle = relative_x*max_angle
 
 
@@ -400,22 +454,48 @@ class ImageSubscriber(Node):
                     #     # msg.angular.z = 0.0
 
                     area = w * h
-                    if area > self.Area / 3.5 or h > 480 * 3 / 4 or w > 640 * 3 / 4:
-                        self.should_stop = True
-
-                    if self.should_stop:
-                        self.get_logger().info("I am stopping rahh")
-                        msg.linear.x = 0.0
+                    if self.z < 0.5:
+                        msg.linear.x = 0.2
                         msg.linear.y = 0.0
                         msg.angular.z = 0.0
                         self.publisher.publish(msg)
+                        
+                        if self.z < 0.15:
+                            self.should_stop = True
+
+                    
+                        if self.should_stop:
+                            self.get_logger().info("I am stopping rahh")
+                            
+                            found_object = Bool()
+                            found_object.data = True
+                            if self.should_stop_turning:
+                                self.get_logger().info("I stopped turning also rahh")
+                                msg.linear.x = 0.0
+                                msg.linear.y = 0.0
+                                msg.angular.z = 0.0
+                                self.publisher.publish(msg)
+                                self.found_object_pb.publish(found_object)
+                            else:
+                                if abs(cx - cols/2) > 15:
+                                    msg.linear.x = 0.0
+                                    msg.linear.y = 0.0
+                                    if (cx-cols/2)>0:
+                                        msg.angular.z = -0.2
+                                    else:
+                                        msg.angular.z = 0.2
+                                    self.publisher.publish(msg)
+                                else:
+                                    self.get_logger().info(f"Making should_stop_turning True cx : {cx}")
+                                    self.should_stop_turning = True
+                                
 
                         if self.goal_in_progress:
                             self.get_logger().warn("Aborting current navigation goal!")
                             self.nav_client._cancel_goal_async(self.current_goal_handle) 
                             self.goal_in_progress = False
 
-                        return
+                            return
                         
                     # else:
                     #     if abs(image_center_x - cx) > 20:
@@ -461,13 +541,15 @@ class ImageSubscriber(Node):
                 # msg.linear.x = 0.0
                 
 
-                if self.object_found and not self.goal_in_progress:
+                if self.object_found and not self.goal_in_progress and not self.picking_object:
                     self.object_found = False
                     msg.angular.z = 0.0
                     self.publisher.publish(msg)
                     detection_msg = Bool()
                     detection_msg.data = False
                     self.should_stop = False
+                    self.should_stop_turning = False
+                    self.z = float("inf")
                     self.detection_pub.publish(detection_msg)
                     self.get_logger().info("Object died resuming explore rahh")
                     

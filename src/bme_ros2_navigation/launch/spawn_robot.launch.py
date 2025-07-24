@@ -189,6 +189,28 @@ def generate_launch_description():
         parameters=[interactive_marker_config_file_path],
         output='screen',
     )
+    
+    robot_controllers = PathJoinSubstitution(
+        [
+            get_package_share_directory('bme_ros2_simple_arm'),
+            'config',
+            'controller_position.yaml',
+        ]
+    )
+    
+    joint_trajectory_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=[
+            'arm_controller',
+            'gripper_controller',
+            '--param-file',
+            robot_controllers,
+            ],
+        parameters=[
+            {'use_sim_time': LaunchConfiguration('use_sim_time')},
+        ]
+    )
 
     launchDescriptionObject = LaunchDescription()
 
@@ -210,5 +232,7 @@ def generate_launch_description():
     launchDescriptionObject.add_action(trajectory_node)
     launchDescriptionObject.add_action(ekf_node)
     # launchDescriptionObject.add_action(interactive_marker_twist_server_node)
-
+    # launchDescriptionObject.add_action(robot_controllers)
+    launchDescriptionObject.add_action(joint_trajectory_controller_spawner)
+    
     return launchDescriptionObject
