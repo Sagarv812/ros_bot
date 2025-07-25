@@ -137,6 +137,7 @@ class ImageSubscriber(Node):
             self.target_object = "person"
             self.stopping_distance_1 = 0.7
             self.stopping_distance_2 = 0.3
+            self.picking_object = False     
     
     def depth_callback(self,depth_msg):
         
@@ -243,6 +244,7 @@ class ImageSubscriber(Node):
 
     def picked_object_callback(self, msg):
         self.picking_object = msg.data
+        self.get_logger().info(f"callback bitch {self.picking_object}")
     
     def image_callback(self, msg):
         """Callback function to receive and store the latest frame."""
@@ -367,6 +369,10 @@ class ImageSubscriber(Node):
         rows, cols = img.shape[:2]
 
         results = self.model(img)
+        
+        self.get_logger().info(f"self.picking_object: {self.picking_object}")
+        self.get_logger().info(f"self.object_found: {self.object_found}")
+        # self.get_logger().info(f)
 
         # def angle_to_scan_index(theta, scan_msg):
         #     angle_min = scan_msg.angle_min
@@ -568,6 +574,7 @@ class ImageSubscriber(Node):
                     self.z = float("inf")
                     self.detection_pub.publish(detection_msg)
                     self.get_logger().info("Object died resuming explore rahh")
+                    
                     
 
         # self.publisher.publish(msg)

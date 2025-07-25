@@ -52,11 +52,11 @@ class JointAnglePublisher(Node):
         self.armMovingpb.publish(lol)
 
     def object_callback(self, msg: PointStamped):
-        self.is_moving = True
+        
         if self.has_moved:
             self.get_logger().info("Motion already executed. Ignoring new object position.")
             return
-
+        self.is_moving = True 
         x = msg.point.x
         y = msg.point.y
         z = msg.point.z
@@ -66,7 +66,7 @@ class JointAnglePublisher(Node):
         self.publish_trajectory(x-0.03, y, z-0.03, "open", 5)          # Move straight down
         self.publish_trajectory(x-0.03, y, z-0.03, "closed", 2)        # Close gripper
         self.publish_trajectory(x, y, z + 0.21, "closed", 3) # Lift up
-        self.publish_trajectory(x-0.1, y, z + 0.25, "closed", 3) # move back
+        self.publish_trajectory(x-0.2, y, z + 0.25, "closed", 3) # move back
 
         self.get_logger().info("Pick-up sequence complete.")
         

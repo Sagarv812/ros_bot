@@ -121,7 +121,9 @@ private:
   // rclcpp::TimerBase::SharedPtr oneshot_;
 
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr resume_subscription_;
+  rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr rexplore_subscription;
   void resumeCallback(const std_msgs::msg::Bool::SharedPtr msg);
+  void found_callback(const std_msgs::msg::Bool::SharedPtr msg);
 
   std::vector<geometry_msgs::msg::Point> frontier_blacklist_;
   geometry_msgs::msg::Point prev_goal_;
