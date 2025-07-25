@@ -103,6 +103,10 @@ Explore::Explore()
   resume_subscription_ = this->create_subscription<std_msgs::msg::Bool>(
       "explore/resume", 10,
       std::bind(&Explore::resumeCallback, this, std::placeholders::_1));
+  
+  rexplore_subscription =this->create_subscription<std_msgs::msg::Bool>(
+      "/arm_controller/picked_object", 10,
+      std::bind(&Explore::found_callback, this, std::placeholders::_1));
 
   RCLCPP_INFO(logger_, "Waiting to connect to move_base nav2 server");
   move_base_client_->wait_for_action_server();
@@ -143,6 +147,11 @@ void Explore::resumeCallback(const std_msgs::msg::Bool::SharedPtr msg)
     resume();
   } else {
     stop();
+  }
+}
+void Explore::found_callback(const std_msgs::msg::Bool::SharedPtr msg){
+  if (msg->data){
+    resetExplorationState();
   }
 }
 
